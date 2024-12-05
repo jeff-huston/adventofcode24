@@ -24,8 +24,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val data = AdventParser().parseInput4(context = this)
-        val processor = DayFourProcessor()
+        val data = AdventParser().parseInput5(context = this)
+        val processor = DayFiveProcessor()
         val result1 = processor.doPartOne(data)
         Log.i("Part One Result", result1)
         val result2 = processor.doPartTwo(data)

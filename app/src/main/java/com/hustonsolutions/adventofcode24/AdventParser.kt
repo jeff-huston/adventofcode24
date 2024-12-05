@@ -72,8 +72,38 @@ class AdventParser {
         return context.resources.openRawResource(rawRes).bufferedReader().readLines()
     }
 
-    fun parseInput5(context: Context): List<String> {
-        val rawRes = R.raw.day_four // Replace with your file name
-        return context.resources.openRawResource(rawRes).bufferedReader().readLines()
+    fun parseInput5(context: Context): Pair<List<PageOrderRule>,List<PrintUpdate>> {
+        val rawRes = R.raw.day_five // Replace with your file name
+        val pageOrderRules = mutableListOf<PageOrderRule>()
+        val printUpdates = mutableListOf<PrintUpdate>()
+        context.resources.openRawResource(rawRes).bufferedReader().forEachLine { line ->
+            // Parse page order rules
+            Regex("(\\d+)\\|(\\d+)").find(line)?.let { match ->
+                val (earlierPage, laterPage) = match.destructured
+                if (earlierPage.isNotEmpty() && laterPage.isNotEmpty()) {
+                    pageOrderRules.add(PageOrderRule(earlierPage.toInt(), laterPage.toInt()))
+                } else {
+                    Log.i("AdventParser", "Skipping malformed line: $line")
+                }
+            }
+
+            // Parse updates to print
+                ?: line.split(",")
+                    .mapNotNull { it.toIntOrNull() }
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { pageNumbers ->
+                        printUpdates.add(PrintUpdate(pageNumbers))
+                    }
+        }
+        return Pair(pageOrderRules, printUpdates)
     }
 }
+
+data class PageOrderRule(
+    val earlierPage: Int,
+    val laterPage: Int,
+)
+
+data class PrintUpdate(
+    val pages: List<Int>,
+)
